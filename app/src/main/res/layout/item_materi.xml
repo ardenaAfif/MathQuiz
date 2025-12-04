@@ -67,6 +67,8 @@
             android:text="@string/title_materi"
             android:textColor="@color/black"
             android:textSize="16sp"
+            android:ellipsize="end"
+            android:maxLines="2"
             app:layout_constraintStart_toEndOf="@+id/relativeLayout"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +16,7 @@ import com.mathquizz.projectskripsi.ui.login.LoginActivity
 import com.mathquizz.projectskripsi.util.PreferenceHelper
 import com.mathquizz.projectskripsi.util.RegisterValidation
 import com.mathquizz.projectskripsi.util.Resource
+import com.mathquizz.projectskripsi.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -34,6 +36,9 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(R.layout.activity_register)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        enableEdgeToEdge()
+        setStatusBarColor(this, this, binding.root, window)
 
         binding.tvSignIn.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -18,6 +19,7 @@ import com.mathquizz.projectskripsi.databinding.ActivitySubMateriBinding
 import com.mathquizz.projectskripsi.dialog.setupCongratsDialog
 import com.mathquizz.projectskripsi.util.Resource
 import com.google.firebase.auth.FirebaseAuth
+import com.mathquizz.projectskripsi.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
@@ -44,6 +46,9 @@ class SubMateriActivity : AppCompatActivity() {
 
         binding = ActivitySubMateriBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        enableEdgeToEdge()
+        setStatusBarColor(this, this, binding.root, window)
 
         val materiId = intent.getStringExtra("materiId")
         val title = intent.getStringExtra("title")

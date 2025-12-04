@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.mathquizz.projectskripsi.databinding.ActivityResultQuisBinding
 import com.mathquizz.projectskripsi.ui.submateri.SubMateriActivity4
 import com.google.firebase.auth.FirebaseAuth
+import com.mathquizz.projectskripsi.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
@@ -28,6 +29,9 @@ class ResultQuisActivity2 : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityResultQuisBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        enableEdgeToEdge()
+        setStatusBarColor(this, this, binding.root, window)
 
 
         materiId = intent.getStringExtra("materiId")

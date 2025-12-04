@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ProgressBar
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,7 @@ import com.mathquizz.projectskripsi.dialog.showPopupDialog
 import com.mathquizz.projectskripsi.ui.submateri.SubMateriActivity
 import com.mathquizz.projectskripsi.util.Resource
 import com.google.firebase.auth.FirebaseAuth
+import com.mathquizz.projectskripsi.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -40,6 +42,9 @@ class ModulActivity : AppCompatActivity() {
             Log.e("ModulActivity", "Error initializing binding", e)
             // Handle the error if binding fails
         }
+
+        enableEdgeToEdge()
+        setStatusBarColor(this, this, binding.root, window)
 
         materiId = intent.getStringExtra("materiId")
         submateriId = intent.getStringExtra("submateriId")

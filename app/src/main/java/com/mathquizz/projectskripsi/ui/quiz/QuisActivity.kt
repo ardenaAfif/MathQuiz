@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +18,7 @@ import com.mathquizz.projectskripsi.ui.resultquis.ResultQuisActivity
 import com.mathquizz.projectskripsi.util.Resource
 import com.google.android.material.card.MaterialCardView
 import com.google.firebase.auth.FirebaseAuth
+import com.mathquizz.projectskripsi.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -43,6 +45,9 @@ class QuisActivity : AppCompatActivity() {
             Log.e("QuisActivity", "Error initializing binding", e)
             // Handle the error if binding fails
         }
+
+        enableEdgeToEdge()
+        setStatusBarColor(this, this, binding.root, window)
 
         val materiId = intent.getStringExtra("materiId")
         val submateriId = intent.getStringExtra("submateriId")
