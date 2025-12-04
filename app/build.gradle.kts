@@ -4,18 +4,17 @@ plugins {
     id("com.google.gms.google-services")
     id("kotlin-parcelize")
     id("kotlin-kapt")
-    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 }
 
 android {
     namespace = "com.mathquizz.projectskripsi"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.mathquizz.projectskripsi"
         minSdk = 30
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -87,8 +86,8 @@ dependencies {
     implementation("io.getstream:photoview:1.0.2")
 
     //Dage Hilt
-    implementation("com.google.dagger:hilt-android:2.50")
-    kapt("com.google.dagger:hilt-android-compiler:2.50")
+    implementation("com.google.dagger:hilt-android:2.57.2")
+    kapt("com.google.dagger:hilt-android-compiler:2.57.2")
 
     //Glide
     implementation("com.github.bumptech.glide:glide:4.15.0")
