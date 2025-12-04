@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "21095382978",
+    "project_id": "projectskripsi-bfda3",
+    "storage_bucket": "projectskripsi-bfda3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:21095382978:android:8896a19175915dd788e05b",
+        "android_client_info": {
+          "package_name": "com.mathquizz.projectskripsi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_mLSdFlPmUPuFn7iEZZXFuQmv9RNLzeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
