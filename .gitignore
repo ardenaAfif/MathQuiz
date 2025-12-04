@@ -1,19 +1,17 @@
-# Hapus semua folder build dan konfigurasi IDE/Gradle dari indeks Git
+# 1. Build artifacts & Intermediate files
+/build
+/app/build
+/app/intermediates
 
-git rm -r --cached .idea 
-git rm -r --cached .gradle
-git rm -r --cached build
-git rm -r --cached app/build 
-git rm -r --cached ._*
-git rm -r --cached .DS_Store
+# 2. Local Configuration & IDE files
+/local.properties
+.gradle/
+.idea/
+*.iml
+*.iws
+*.ipr
 
-# Perintah untuk menghapus file lokal.properties yang berisi path SDK
-git rm --cached local.properties
-
-# Berikan peringatan jika .DS_Store (file metadata macOS) pernah ter-commit
-git rm -r --cached .DS_Store 
-
-# Tanda titik (dot) pada nama folder seperti '.idea' menunjukkan bahwa ini adalah folder tersembunyi
-# dan umumnya hanya berisi cache/konfigurasi lokal yang tidak boleh dibagikan.
-
+# 3. macOS Metadata Files (Untuk file yang diawali titik ._)
+# Ini mengatasi semua file yang diawali '._' dan juga .DS_Store
+._*
 **/.DS_Store
