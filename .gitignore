@@ -4,6 +4,8 @@ git rm -r --cached .idea
 git rm -r --cached .gradle
 git rm -r --cached build
 git rm -r --cached app/build 
+git rm -r --cached ._*
+git rm -r --cached .DS_Store
 
 # Perintah untuk menghapus file lokal.properties yang berisi path SDK
 git rm --cached local.properties
@@ -13,3 +15,5 @@ git rm -r --cached .DS_Store
 
 # Tanda titik (dot) pada nama folder seperti '.idea' menunjukkan bahwa ini adalah folder tersembunyi
 # dan umumnya hanya berisi cache/konfigurasi lokal yang tidak boleh dibagikan.
+
+**/.DS_Store
