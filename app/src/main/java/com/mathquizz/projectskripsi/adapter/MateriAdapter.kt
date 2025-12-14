@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -15,69 +16,47 @@ import com.mathquizz.projectskripsi.R
 import com.mathquizz.projectskripsi.data.Materi
 import com.mathquizz.projectskripsi.databinding.ItemMateriBinding
 import com.mathquizz.projectskripsi.dialog.showCustomPopup
-import com.mathquizz.projectskripsi.ui.submateri.SubMateriActivity2
-import com.mathquizz.projectskripsi.ui.submateri.SubMateriActivity3
 
 class MateriAdapter(
-    private val activity: Activity,
     private val context: Context,
-    private val onItemClick: (String) -> Unit
+    private val onItemClick: (String, String) -> Unit
 ) : RecyclerView.Adapter<MateriAdapter.MateriViewHolder>() {
 
     private var clickableItems: Map<String, Boolean> = emptyMap()
-
-    private fun showPopup(message: String) {
-        activity.showCustomPopup(message)
-    }
 
     inner class MateriViewHolder(private val binding: ItemMateriBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(materi: Materi, isLocked: Boolean) {
             binding.apply {
                 tvTitle.text = materi.title
-
                 scoreProgressIndicator.progress = materi.progress
-                val progressText = "${materi.progress}%"
-                scoreProgressText.text = progressText
+                scoreProgressText.text = "${materi.progress}%"
 
                 val isClickable = clickableItems[materi.materiId] ?: false
-                itemView.isClickable = isClickable
-                itemView.isEnabled = true
+
+                // Visual Update based on Lock Status
                 if (isLocked) {
                     ivLockIcon.visibility = View.VISIBLE
                     scoreProgressText.visibility = View.GONE
-
                     tvCategory.text = "${materi.category} - Terkunci"
-                    scoreProgressIndicator.trackColor = context.getColor(R.color.gray)
-                    tvCategory.setTextColor(context.getColor(R.color.gray_dark))
+                    scoreProgressIndicator.trackColor =
+                        ContextCompat.getColor(context, R.color.gray)
+                    tvCategory.setTextColor(ContextCompat.getColor(context, R.color.gray_dark))
                 } else {
                     ivLockIcon.visibility = View.GONE
                     scoreProgressText.visibility = View.VISIBLE
-
-
                     tvCategory.text = materi.category
-                    scoreProgressIndicator.trackColor = context.getColor(R.color.blue_4)
-                    tvCategory.setTextColor(context.getColor(R.color.black))
+                    scoreProgressIndicator.trackColor =
+                        ContextCompat.getColor(context, R.color.blue_4)
+                    tvCategory.setTextColor(ContextCompat.getColor(context, R.color.black))
                 }
+
                 itemView.setOnClickListener {
-                    Log.d("MateriAdapter", "Item clicked: ${materi.materiId}, isClickable: $isClickable")
                     if (isClickable) {
-                        val intent = if (adapterPosition <= 5) {
-                            Intent(context, SubMateriActivity2::class.java).apply {
-                                putExtra("materiId", materi.materiId)
-                                putExtra("title", materi.title)
-                            }
-                        } else {
-                            Intent(context, SubMateriActivity3::class.java).apply {
-                                putExtra("materiId", materi.materiId)
-                                putExtra("title", materi.title)
-                            }
-                        }
-                        context.startActivity(intent)
+                        onItemClick(materi.materiId, materi.title)
                     } else {
-                        showPopup("Materi Masih Terkunci!!")
+                        (context as? Activity)?.showCustomPopup("Materi Masih Terkunci!!")
                     }
-                    onItemClick(materi.materiId)
                 }
             }
         }
@@ -109,33 +88,12 @@ class MateriAdapter(
 
     override fun onBindViewHolder(holder: MateriViewHolder, position: Int) {
         val materi = differ.currentList[position]
-        val isLocked = if (position == 0) {
-            false
-        } else {
-            val previousMateri = differ.currentList.getOrNull(position - 1)
-            previousMateri?.progress ?: 0 < 80
+        val isLocked = if (position == 0) false else {
+            val prevItem = differ.currentList.getOrNull(position - 1)
+            (prevItem?.progress ?: 0) < 80
         }
+
         holder.bind(materi, isLocked)
-        if (position == itemCount - 1) {
-            val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-            layoutParams.setMargins(
-                layoutParams.leftMargin,
-                25,
-                layoutParams.rightMargin,
-                context.resources.getDimensionPixelSize(R.dimen.item_padding_bottom) // 50dp padding
-            )
-            holder.itemView.layoutParams = layoutParams
-        } else {
-            // Reset padding for other items if needed
-            val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-            layoutParams.setMargins(
-                layoutParams.leftMargin,
-                25,
-                layoutParams.rightMargin,
-                5 // default padding
-            )
-            holder.itemView.layoutParams = layoutParams
-        }
     }
 
     @SuppressLint("NotifyDataSetChanged")

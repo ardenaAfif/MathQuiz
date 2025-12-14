@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.mathquizz.projectskripsi.MainActivity
 import com.mathquizz.projectskripsi.R
+import com.mathquizz.projectskripsi.ui.materi.MateriActivity
 
 fun Activity.setupCongratsDialog(message: String, progress: Int, onYesClicked: () -> Unit) {
     val dialog = Dialog(this)
@@ -49,7 +50,7 @@ fun Activity.setupCongratsDialog(message: String, progress: Int, onYesClicked: (
     btnYes.setOnClickListener {
         onYesClicked()
         dialog.dismiss()
-        val intent = Intent(this, MainActivity::class.java).apply {
+        val intent = Intent(this, MateriActivity::class.java).apply {
             putExtra("navigateToHome", true) // Optional: Pass extra data if needed
         }
         startActivity(intent)

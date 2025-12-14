@@ -16,9 +16,12 @@
         android:theme="@style/Theme.ProjectSkripsi"
         tools:targetApi="31">
         <activity
+            android:name=".ui.materi.MateriActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.submateri.SubMateriActivity2"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.resultquis.ResultQuisActivity"
             android:exported="false"
@@ -47,12 +50,10 @@
             android:name=".ui.submateri.SubMateriActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.submateri.SubMateriActivity3"
             android:exported="false"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.submateri.SubMateriActivity4"
             android:exported="false"

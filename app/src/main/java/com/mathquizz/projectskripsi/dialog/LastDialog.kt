@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.mathquizz.projectskripsi.MainActivity
 import com.mathquizz.projectskripsi.R
+import com.mathquizz.projectskripsi.ui.materi.MateriActivity
 
 fun Activity.showLastDialog(message: String, onYesClicked: () -> Unit) {
     val dialog = Dialog(this)
@@ -44,7 +45,7 @@ fun Activity.showLastDialog(message: String, onYesClicked: () -> Unit) {
     btnNo.setOnClickListener {
         onYesClicked()
         dialog.dismiss()
-        val intent = Intent(this, MainActivity::class.java).apply {
+        val intent = Intent(this, MateriActivity::class.java).apply {
             putExtra("navigateToHome", true) // Optional: Pass extra data if needed
         }
         startActivity(intent)

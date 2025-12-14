@@ -16,18 +16,19 @@ class FirebaseCommon {
 
     val firestore = FirebaseFirestore.getInstance()
 
-    suspend fun getMateriList(): List<Materi> {
+    suspend fun getMateriList(collectionName: String = "materi"): List<Materi> {
         return try {
-            val snapshot = firestore.collection("materi")
+            val snapshot = firestore.collection(collectionName)
                 .orderBy("urutan")
                 .get()
                 .await()
             snapshot.toObjects(Materi::class.java)
         } catch (e: Exception) {
-            Log.e("FirebaseCommon", "Error fetching materi list", e)
+            Log.e("FirebaseCommon", "Error fetching materi list from $collectionName", e)
             emptyList()
         }
     }
+
 
     suspend fun getMateriById(materiId: String): Materi? {
         return try {
@@ -39,8 +40,8 @@ class FirebaseCommon {
         }
     }
 
-    suspend fun getSubMateriList(materiId: String): QuerySnapshot {
-        return firestore.collection("materi")
+    suspend fun getSubMateriList(collectionName: String = "materi", materiId: String): QuerySnapshot {
+        return firestore.collection(collectionName)
             .document(materiId)
             .collection("submateri")
             .orderBy("urutan")

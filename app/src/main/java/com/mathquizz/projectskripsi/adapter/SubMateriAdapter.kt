@@ -15,23 +15,27 @@ import com.bumptech.glide.Glide
 
 import com.mathquizz.projectskripsi.data.SubMateri
 import com.mathquizz.projectskripsi.databinding.ItemSubmateriBinding
+import com.mathquizz.projectskripsi.dialog.showCustomPopup
 import com.mathquizz.projectskripsi.dialog.showQuizDialog
 import com.mathquizz.projectskripsi.ui.modul.ModulActivity
 import com.mathquizz.projectskripsi.ui.quiz.QuisActivity
+import com.mathquizz.projectskripsi.ui.submateri.SubMateriActivity
 
 class SubMateriAdapter(
-    private val activity: Activity,
     private val context: Context,
     private val materiId: String,
+    private val collectionName: String,
+    private val adapterType: Int, // 1 = Quiz di posisi 2, 2 = Quiz di posisi 3
     private val startModulActivityLauncher: ActivityResultLauncher<Intent>,
-    var isProgressSufficient: Boolean // Check if progress is sufficient
+    var isProgressSufficient: Boolean
 ) : RecyclerView.Adapter<SubMateriAdapter.SubMateriViewHolder>() {
+
+    private val quizPosition: Int
+        get() = if (adapterType == 1) 2 else 3
 
     inner class SubMateriViewHolder(private val binding: ItemSubmateriBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private fun showPopup(message: String) {
-            activity.showQuizDialog(message)
-        }
+
         fun bind(subMateri: SubMateri, position: Int) {
             binding.apply {
                 tvsubTitle.text = subMateri.title
@@ -41,72 +45,61 @@ class SubMateriAdapter(
                     .load(subMateri.imageURL)
                     .centerCrop()
                     .into(ivsubMateri)
-                if (position == 2) {
-                    binding.imgLock.visibility = if (isProgressSufficient) View.GONE else View.VISIBLE
-                } else {
-                    binding.imgLock.visibility = View.GONE
-                }
+
+                val isLocked = (position == quizPosition && !isProgressSufficient)
+                binding.imgLock.visibility = if (isLocked) View.VISIBLE else View.GONE
+
                 // Set the clickability of the item based on its position and progress
-                val isClickable = position in listOf(0, 1) || isProgressSufficient
-                itemView.isClickable = isClickable
-                itemView.isEnabled = true
+                val isClickable = (position != quizPosition) || isProgressSufficient
+
+                itemView.alpha = if(isClickable) 1.0f else 0.5f
+                itemView.isEnabled = isClickable
 
                 itemView.setOnClickListener {
                     if (isClickable) {
-                        val intent = when (position) {
-                            2 -> Intent(context, QuisActivity::class.java).apply {
+                        val intent: Intent = if (position == quizPosition) {
+                            // --- MASUK KE QUIZ ---
+                            Intent(context, QuisActivity::class.java).apply {
                                 putExtra("materiId", materiId)
                                 putExtra("submateriId", subMateri.submateriId)
                                 putExtra("title", subMateri.title)
+                                putExtra("collectionName", collectionName)
                             }
-                            1 -> Intent(context, ModulActivity::class.java).apply {
+                        } else {
+                            // --- MASUK KE MODUL ---
+                            Intent(context, ModulActivity::class.java).apply {
                                 putExtra("materiId", materiId)
                                 putExtra("submateriId", subMateri.submateriId)
                                 putExtra("title", subMateri.title)
-                            }
-                            else -> Intent(context, ModulActivity::class.java).apply {
-                                putExtra("materiId", materiId)
-                                putExtra("submateriId", subMateri.submateriId)
-                                putExtra("title", subMateri.title)
+                                putExtra("collectionName", collectionName)
                             }
                         }
                         startModulActivityLauncher.launch(intent)
                     } else {
-                        showPopup("Pelajari Materi dan Contoh Soal\nTerlebih Dahulu")
+                        (context as? Activity)?.showCustomPopup("Pelajari Materi dan Contoh Soal\nTerlebih Dahulu!")
                     }
+
                 }
             }
         }
     }
 
     private val diffCallback = object : DiffUtil.ItemCallback<SubMateri>() {
-        override fun areItemsTheSame(oldItem: SubMateri, newItem: SubMateri): Boolean {
-            return oldItem.submateriId == newItem.submateriId
-        }
-
-        override fun areContentsTheSame(oldItem: SubMateri, newItem: SubMateri): Boolean {
-            return oldItem == newItem
-        }
+        override fun areItemsTheSame(oldItem: SubMateri, newItem: SubMateri): Boolean = oldItem.submateriId == newItem.submateriId
+        override fun areContentsTheSame(oldItem: SubMateri, newItem: SubMateri): Boolean = oldItem == newItem
     }
 
     val differ = AsyncListDiffer(this, diffCallback)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubMateriViewHolder {
         return SubMateriViewHolder(
-            ItemSubmateriBinding.inflate(
-                LayoutInflater.from(context), parent, false
-            )
+            ItemSubmateriBinding.inflate(LayoutInflater.from(context), parent, false)
         )
-        Log.d("ActivityCheck", "SubMateriAdapter dipanggil")   //Cek Pemanggilan
-
     }
 
-    override fun getItemCount(): Int {
-        return differ.currentList.size
-    }
+    override fun getItemCount(): Int = differ.currentList.size
 
     override fun onBindViewHolder(holder: SubMateriViewHolder, position: Int) {
-        val subMateri = differ.currentList[position]
-        holder.bind(subMateri, position)
+        holder.bind(differ.currentList[position], position)
     }
 }

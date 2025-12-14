@@ -27,8 +27,10 @@ class SubMateriViewModel @Inject constructor(
 
     private var userId: String? = null
     private var materiId: String? = null
+    private var collectionName: String = "materi"
 
-    fun setMateriId(materiId: String) {
+    fun setMateriId(collectionName: String, materiId: String) {
+        this.collectionName = collectionName
         this.materiId = materiId
         fetchSubMateri()
         fetchProgress()
@@ -40,11 +42,11 @@ class SubMateriViewModel @Inject constructor(
     }
 
     private fun fetchSubMateri() {
-        materiId?.let {
+        materiId?.let { id ->
             viewModelScope.launch {
                 _subMateriList.emit(Resource.Loading())
                 try {
-                    val result = firebaseCommon.getSubMateriList(it)
+                    val result = firebaseCommon.getSubMateriList(collectionName, id)
                     val subMateriList = result.toObjects(SubMateri::class.java)
                     _subMateriList.emit(Resource.Success(subMateriList))
                 } catch (e: Exception) {
@@ -54,7 +56,7 @@ class SubMateriViewModel @Inject constructor(
         }
 
     }
-    private fun fetchProgress() {
+    fun fetchProgress() {
         userId?.let { userId ->
             materiId?.let { materiId ->
                 viewModelScope.launch {

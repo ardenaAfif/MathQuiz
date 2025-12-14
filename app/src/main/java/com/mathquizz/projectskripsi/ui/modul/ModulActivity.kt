@@ -1,5 +1,6 @@
 package com.mathquizz.projectskripsi.ui.modul
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +16,7 @@ import com.mathquizz.projectskripsi.dialog.showPopupDialog
 import com.mathquizz.projectskripsi.ui.submateri.SubMateriActivity
 import com.mathquizz.projectskripsi.util.Resource
 import com.google.firebase.auth.FirebaseAuth
+import com.mathquizz.projectskripsi.ui.materi.MateriActivity
 import com.mathquizz.projectskripsi.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -30,6 +32,8 @@ class ModulActivity : AppCompatActivity() {
     private var materiId: String? = null
     private var title: String? = null
     private var submateriId: String? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,7 +44,8 @@ class ModulActivity : AppCompatActivity() {
             setContentView(binding.root)
         } catch (e: Exception) {
             Log.e("ModulActivity", "Error initializing binding", e)
-            // Handle the error if binding fails
+            finish()
+            return
         }
 
         enableEdgeToEdge()
@@ -50,88 +55,83 @@ class ModulActivity : AppCompatActivity() {
         submateriId = intent.getStringExtra("submateriId")
         title = intent.getStringExtra("title")
 
+        binding.tvListModul.text = title
+
         if (materiId != null && submateriId != null) {
             viewModel.setModulId(materiId!!, submateriId!!)
         }
-        binding.tvListModul.text = title
+
         setupObservers()
+        setupButtonAction()
 
-        if (materiId != null) {
-            viewModel.getMateriTitle(materiId!!) { retrievedTitle ->
-                title = retrievedTitle // Properly assign title here
-                binding.btnModul.setOnClickListener {
-                    val userId = auth.currentUser?.uid ?: return@setOnClickListener
-                    if (materiId != null && submateriId != null) {
 
-                        binding.progressBar.visibility = ProgressBar.VISIBLE
-                        viewModel.updateUserProgress(userId, materiId!!, submateriId!!, progress) { showPopup ->
-                            binding.progressBar.visibility = ProgressBar.GONE
-                            if (showPopup) {
-                                showPopupDialog(
-                                    "Anda telah mendapatkan \n progress points: $progress%.",
-                                    progress
-                                ) {
-                                    val intent = Intent(this, SubMateriActivity::class.java).apply {
-                                        putExtra("materiId", materiId)
-                                        putExtra("title", title)
-                                        putExtra("progress", progress)
-                                    }
-                                    startActivity(intent)
-                                    finish()
-                                }
-                            } else {
-                                val intent = Intent(this, SubMateriActivity::class.java).apply {
-                                    putExtra("materiId", materiId)
-                                    putExtra("title", title)
-                                    putExtra("progress", progress)
-                                }
-                                startActivity(intent)
-                                finish()
-                            }
+    }
+
+
+    private fun setupButtonAction() {
+        binding.btnModul.setOnClickListener {
+            val userId = auth.currentUser?.uid ?: return@setOnClickListener
+
+            if (materiId != null && submateriId != null) {
+                binding.progressBar.visibility = ProgressBar.VISIBLE
+
+                // Update Progress di Firebase
+                viewModel.updateUserProgress(userId, materiId!!, submateriId!!, progress) { showPopup ->
+                    binding.progressBar.visibility = ProgressBar.GONE
+
+                    if (showPopup) {
+                        showPopupDialog(
+                            "Anda telah mendapatkan \n progress points: $progress%.",
+                            progress
+                        ) {
+                            sendResultAndFinish() // Kembali ke SubMateriActivity
                         }
+                    } else {
+                        sendResultAndFinish() // Kembali ke SubMateriActivity
                     }
                 }
             }
         }
     }
 
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        dialog?.dismiss() // Ensure dialog is dismissed when activity is destroyed
+    private fun sendResultAndFinish() {
+        val resultIntent = Intent().apply {
+            putExtra("progress", progress)
+        }
+        setResult(RESULT_OK, resultIntent)
+        finish()
     }
 
 
     private fun setupObservers() {
-        lifecycleScope.launch {
+        lifecycleScope.launchWhenStarted {
             viewModel.modul.collect { resource ->
                 when (resource) {
                     is Resource.Loading -> {
-                        // Show loading state if needed
+                        binding.progressBar.visibility = ProgressBar.VISIBLE
                     }
-
                     is Resource.Success -> {
-                        val modulList = resource.data ?: emptyList() // Handle nullable list
+                        binding.progressBar.visibility = ProgressBar.GONE
+                        val modulList = resource.data ?: emptyList()
                         if (modulList.isNotEmpty()) {
-                            val modul = modulList[0] // Assuming you want the first module's image
-
+                            val modul = modulList[0]
                             Glide.with(this@ModulActivity)
                                 .load(modul.imagemodul)
                                 .into(binding.ivModul)
                             progress = modul.progress
                         }
                     }
-
                     is Resource.Error -> {
                         binding.progressBar.visibility = ProgressBar.GONE
                     }
-
-                    else -> {
-                        binding.progressBar.visibility = ProgressBar.GONE
-                    }
+                    else -> Unit
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        dialog?.dismiss() // Ensure dialog is dismissed when activity is destroyed
     }
 }
