@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setStatusBarColor(this, this, binding.root, window)
 
-        setSupportActionBar(binding.toolbar)
+//        setSupportActionBar(binding.toolbar)
         val navView: BottomNavigationView = binding.navView
 
 
@@ -41,23 +41,23 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_person
             )
         )
-        setupActionBarWithNavController(navController, appBarConfiguration)
+//        setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
 
 
 
     }
-    override fun onBackPressed() {
-        // Check if the current destination is the home fragment
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        if (navController.currentDestination?.id == R.id.navigation_home) {
-            // If it's home fragment, finish the activity to exit the app
-            finish()
-        } else {
-            // Otherwise, perform the default back behavior
-            super.onBackPressed()
-        }
-    }
+//    override fun onBackPressed() {
+//        // Check if the current destination is the home fragment
+//        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+//        if (navController.currentDestination?.id == R.id.navigation_home) {
+//            // If it's home fragment, finish the activity to exit the app
+//            finish()
+//        } else {
+//            // Otherwise, perform the default back behavior
+//            super.onBackPressed()
+//        }
+//    }
 
 }
