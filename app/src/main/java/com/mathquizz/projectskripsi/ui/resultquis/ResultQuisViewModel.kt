@@ -22,8 +22,10 @@ class ResultQuisViewModel @Inject constructor(
     val progress: StateFlow<Int> get() = _progress
     private var userId: String? = null
     private var materiId: String? = null
+    private var collectionName: String = "materi"
 
-    fun setMateriId(materiId: String) {
+    fun setMateriId(collectionName: String, materiId: String) {
+        this.collectionName = collectionName
         this.materiId = materiId
         fetchProgressIfReady()
     }
@@ -58,7 +60,7 @@ class ResultQuisViewModel @Inject constructor(
         materiId?.let { id ->
             viewModelScope.launch {
                 try {
-                    val materi = firebaseCommon.getMateriById(id)
+                    val materi = firebaseCommon.getMateriById(collectionName, id)
                     callback(materi?.title)
                 } catch (e: Exception) {
                     Log.e("ResultQuisViewModel", "Error fetching materi title", e)

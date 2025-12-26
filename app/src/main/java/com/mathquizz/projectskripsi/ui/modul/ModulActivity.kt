@@ -51,6 +51,8 @@ class ModulActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setStatusBarColor(this, this, binding.root, window)
 
+        val collectionName = intent.getStringExtra("collectionName") ?: "materi"
+
         materiId = intent.getStringExtra("materiId")
         submateriId = intent.getStringExtra("submateriId")
         title = intent.getStringExtra("title")
@@ -58,7 +60,7 @@ class ModulActivity : AppCompatActivity() {
         binding.tvListModul.text = title
 
         if (materiId != null && submateriId != null) {
-            viewModel.setModulId(materiId!!, submateriId!!)
+            viewModel.setModulId(collectionName, materiId!!, submateriId!!)
         }
 
         setupObservers()

@@ -30,9 +30,9 @@ class FirebaseCommon {
     }
 
 
-    suspend fun getMateriById(materiId: String): Materi? {
+    suspend fun getMateriById(collectionName: String, materiId: String): Materi? {
         return try {
-            val document = firestore.collection("materi").document(materiId).get().await()
+            val document = firestore.collection(collectionName).document(materiId).get().await()
             document.toObject(Materi::class.java)
         } catch (e: Exception) {
             Log.e("FirebaseCommon", "Error fetching materi by ID", e)
@@ -49,8 +49,8 @@ class FirebaseCommon {
     }
 
 
-    suspend fun getQuisQuestion(materiId: String, subMateriId: String): QuerySnapshot {
-        return firestore.collection("materi")
+    suspend fun getQuisQuestion(collectionName: String, materiId: String, subMateriId: String): QuerySnapshot {
+        return firestore.collection(collectionName)
             .document(materiId)
             .collection("submateri")
             .document(subMateriId)
@@ -59,8 +59,8 @@ class FirebaseCommon {
             .await()
     }
 
-    suspend fun getModul(materiId: String, subMateriId: String): QuerySnapshot {
-        return firestore.collection("materi")
+    suspend fun getModul(collectionName: String, materiId: String, subMateriId: String): QuerySnapshot {
+        return firestore.collection(collectionName)
             .document(materiId)
             .collection("submateri")
             .document(subMateriId)

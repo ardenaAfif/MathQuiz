@@ -46,10 +46,15 @@ class SubMateriViewModel @Inject constructor(
             viewModelScope.launch {
                 _subMateriList.emit(Resource.Loading())
                 try {
+                    Log.d("DEBUG_FIRESTORE", "Fetching from Collection: $collectionName, Doc ID: $id")
                     val result = firebaseCommon.getSubMateriList(collectionName, id)
+
+                    Log.d("DEBUG_FIRESTORE", "Data Found: ${result.size()}")
+
                     val subMateriList = result.toObjects(SubMateri::class.java)
                     _subMateriList.emit(Resource.Success(subMateriList))
                 } catch (e: Exception) {
+                    Log.e("DEBUG_FIRESTORE", "Error: ${e.message}")
                     _subMateriList.emit(Resource.Error(e.message ?: "Error occurred"))
                 }
             }

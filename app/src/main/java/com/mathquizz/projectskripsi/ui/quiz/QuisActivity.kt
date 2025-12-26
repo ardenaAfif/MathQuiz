@@ -52,9 +52,10 @@ class QuisActivity : AppCompatActivity() {
         val materiId = intent.getStringExtra("materiId")
         val submateriId = intent.getStringExtra("submateriId")
         val title = intent.getStringExtra("title")
+        val collectionName = intent.getStringExtra("collectionName") ?: "materi"
 
       if (materiId != null && submateriId !=null) {
-          viewModel.setQuisId(materiId, submateriId)
+          viewModel.setQuisId(collectionName, materiId, submateriId)
       }
         binding.tvList.text = title
         setupObservers()
@@ -194,6 +195,7 @@ class QuisActivity : AppCompatActivity() {
                     putExtra("progress", scaledProgress)
                     putExtra("materiId", materiId)
                     putExtra("submateriId", submateriId)
+                    putExtra("collectionName", intent.getStringExtra("collectionName"))
                 }
                 startActivity(intent)
                 finish()

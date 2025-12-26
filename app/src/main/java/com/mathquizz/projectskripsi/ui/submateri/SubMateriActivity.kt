@@ -196,14 +196,6 @@ class SubMateriActivity : AppCompatActivity() {
 //        }
 //    }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        val intent = Intent(this, MateriActivity::class.java).apply {
-            putExtra("navigateToHome", true)
-        }
-        startActivity(intent)
-    }
-
     override fun onResume() {
         super.onResume()
         viewModel.fetchProgress()

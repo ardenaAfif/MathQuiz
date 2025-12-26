@@ -22,11 +22,14 @@ class QuisViewModel @Inject constructor(
 
     private var materiId: String? = null
     private var subMateriId: String? = null
+    private var collectionName: String = "materi"
+
     private val _quisQuestion = MutableStateFlow<Resource<List<Quis>>>(Resource.Unspecified())
     val quisQuestion: StateFlow<Resource<List<Quis>>> = _quisQuestion
 
 
-    fun setQuisId(materiId: String, subMateriId: String) {
+    fun setQuisId(collectionName: String, materiId: String, subMateriId: String) {
+        this.collectionName = collectionName
         this.materiId = materiId
         this.subMateriId = subMateriId
         fetchQuisQuestion()
@@ -41,7 +44,7 @@ class QuisViewModel @Inject constructor(
                 viewModelScope.launch {
                     _quisQuestion.emit(Resource.Loading())
                     try {
-                        val result = firebaseCommon.getQuisQuestion(mId, sId)
+                        val result = firebaseCommon.getQuisQuestion(collectionName,mId, sId)
                         val quisQuestion = result.toObjects(Quis::class.java)
                         _quisQuestion.emit(Resource.Success(quisQuestion))
                     } catch (e: Exception) {

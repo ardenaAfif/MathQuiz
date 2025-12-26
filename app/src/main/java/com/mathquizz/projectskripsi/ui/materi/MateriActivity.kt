@@ -45,6 +45,8 @@ class MateriActivity : AppCompatActivity() {
 
         val collectionName = intent.getStringExtra("COLLECTION_NAME") ?: "materi"
 
+        currentCollectionName = collectionName
+
         binding.tvTitle.text = if(collectionName == "materiintegral") "Materi Integral" else "Materi Parsial"
 
         setupRvMateri()
@@ -116,14 +118,6 @@ class MateriActivity : AppCompatActivity() {
                 materiAdapter.updateClickableItems(clickableItems)
             }
         }
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        val intent = Intent(this, MainActivity::class.java).apply {
-            putExtra("navigateToHome", true)
-        }
-        startActivity(intent)
     }
 
     override fun onResume() {

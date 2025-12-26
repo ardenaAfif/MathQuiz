@@ -10,7 +10,7 @@ data class Modul(
     val modulId: String,
     val imagemodul: String,
     val progress: Int,
-    val issucces: Boolean
+    val issucsess: Boolean
 
 ) : Parcelable {
 

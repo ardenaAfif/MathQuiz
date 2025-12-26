@@ -40,9 +40,10 @@ class ResultQuisActivity : AppCompatActivity() {
         val answerResults = intent.getSerializableExtra("answerResults") as? ArrayList<Pair<Int, Boolean>> ?: arrayListOf()
         val scaledProgress = intent.getIntExtra("progress", 0)
         val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val collectionName = intent.getStringExtra("collectionName") ?: "materi"
 
         userId?.let { viewModel.setUserId(it) }
-        materiId?.let { viewModel.setMateriId(it) }
+        materiId?.let { viewModel.setMateriId(collectionName, it) }
 
         displayQuizResults(correctAnswers, totalQuestions, answerResults,scaledProgress )
 
@@ -62,6 +63,7 @@ class ResultQuisActivity : AppCompatActivity() {
                         putExtra("materiId", id)
                     }
                     putExtra("title", retrievedTitle)
+                    putExtra("collectionName", collectionName)
 
                 }
                 startActivity(intent)

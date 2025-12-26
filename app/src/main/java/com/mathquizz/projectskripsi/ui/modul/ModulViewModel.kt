@@ -19,18 +19,18 @@ class ModulViewModel @Inject constructor(
 
     private val firebaseCommon: FirebaseCommon,
 
-
-
-
 ) : ViewModel() {
     private var materiId: String? = null
     private var subMateriId: String? = null
+    private var collectionName: String = "materi"
+
     private val _modul = MutableStateFlow<Resource<List<Modul>>>(Resource.Unspecified())
     val modul: StateFlow<Resource<List<Modul>>> = _modul
     private val _progress = MutableStateFlow(0)
     val progress: StateFlow<Int> = _progress
 
-    fun setModulId(materiId: String, subMateriId: String) {
+    fun setModulId(collectionName: String, materiId: String, subMateriId: String) {
+        this.collectionName = collectionName
         this.materiId = materiId
         this.subMateriId = subMateriId
         fetchModul()
@@ -46,7 +46,7 @@ class ModulViewModel @Inject constructor(
                 viewModelScope.launch {
                     _modul.emit(Resource.Loading())
                     try {
-                        val result = firebaseCommon.getModul(mId, sId)
+                        val result = firebaseCommon.getModul(collectionName, mId, sId)
                         val modul = result.toObjects(Modul::class.java)
                         _modul.emit(Resource.Success(modul))
                     } catch (e: Exception) {
@@ -72,7 +72,7 @@ class ModulViewModel @Inject constructor(
 
     fun getMateriTitle(materiId: String, callback: (String?) -> Unit) {
         viewModelScope.launch {
-            val materi = firebaseCommon.getMateriById(materiId)
+            val materi = firebaseCommon.getMateriById(collectionName, materiId)
             callback(materi?.title)
         }
     }
