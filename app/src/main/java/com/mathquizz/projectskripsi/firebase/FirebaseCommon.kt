@@ -85,44 +85,37 @@ class FirebaseCommon {
         userId: String,
         materiId: String,
         subMateriId: String,
-        newProgress: Int
+        progressIncrement: Int
     ): Pair<Boolean, Boolean> {
-        val progressCollection = firestore.collection(Constants.USER_COLLECTION)
-            .document(userId)
-            .collection(Constants.PROGRESS_COLLECTION)
-            .document(materiId)
 
-        val processCollection = firestore.collection(Constants.USER_COLLECTION)
-            .document(userId)
-            .collection(Constants.PROGRESS_COLLECTION)
-            .document(materiId)
-            .collection(Constants.PROSESS_COLLECTION)
-            .document(subMateriId)
+        val userDocRef = firestore.collection(Constants.USER_COLLECTION).document(userId)
+        val progressDocRef = userDocRef.collection(Constants.PROGRESS_COLLECTION).document(materiId)
+        val processDocRef = progressDocRef.collection(Constants.PROSESS_COLLECTION).document(subMateriId)
 
         return try {
             firestore.runTransaction { transaction ->
-                val progressDocumentSnapshot = transaction.get(progressCollection)
-                val processDocumentSnapshot = transaction.get(processCollection)
+                val progressSnapshot = transaction.get(progressDocRef)
+                val processSnapshot = transaction.get(processDocRef)
 
-                val currentProgress = progressDocumentSnapshot.getLong("progressint")?.toInt() ?: 0
-                val issuccess = progressDocumentSnapshot.getBoolean("issucsess") ?: false
-                val processExists = processDocumentSnapshot.exists()
-                val processStatus = processDocumentSnapshot.getBoolean("prosess") ?: false
+                val currentTotalProgress = progressSnapshot.getLong("progressint")?.toInt() ?: 0
+                val isModuleAlreadySuccess = progressSnapshot.getBoolean("issucsess") ?: false
 
-                if (!issuccess && (!processExists || !processStatus)) {
-                    val updatedProgress = (currentProgress + newProgress).coerceAtMost(100)
-                    transaction.set(progressCollection, mapOf("progressint" to updatedProgress), SetOptions.merge())
-                    transaction.set(processCollection, mapOf("prosess" to true), SetOptions.merge())
+                val isAlreadyProcessed = processSnapshot.exists() && (processSnapshot.getBoolean("prosess") ?: false)
+
+                if (!isModuleAlreadySuccess && !isAlreadyProcessed) {
+                    val newTotal = (currentTotalProgress + progressIncrement).coerceAtMost(100)
+
+                    transaction.set(progressDocRef, mapOf("progressint" to newTotal), SetOptions.merge())
+
+                    transaction.set(processDocRef, mapOf("prosess" to true), SetOptions.merge())
+
+                    Pair(isModuleAlreadySuccess, isAlreadyProcessed)
+                } else {
+                    Pair(isModuleAlreadySuccess, isAlreadyProcessed)
                 }
-
-                Pair(issuccess, processStatus)
             }.await()
         } catch (e: Exception) {
-            Log.e(
-                "FirebaseCommon",
-                "Error saat memperbarui progress dan status proses untuk materiId: $materiId, subMateriId: $subMateriId",
-                e
-            )
+            Log.e("FirebaseCommon", "Transaction Failed: $e")
             Pair(false, false)
         }
     }

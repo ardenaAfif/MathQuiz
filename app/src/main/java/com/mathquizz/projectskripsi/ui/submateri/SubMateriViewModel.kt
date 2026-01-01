@@ -62,15 +62,19 @@ class SubMateriViewModel @Inject constructor(
 
     }
     fun fetchProgress() {
-        userId?.let { userId ->
-            materiId?.let { materiId ->
-                viewModelScope.launch {
-                    try {
-                        val currentProgress = firebaseCommon.getCurrentProgress(userId, materiId)
-                        _progress.emit(currentProgress)
-                    } catch (e: Exception) {
-                        Log.e("SubMateriViewModel", "Error fetching progress", e)
-                    }
+        val uid = userId
+        val mid = materiId
+
+        if (uid != null && mid != null) {
+            viewModelScope.launch {
+                try {
+                    val currentProgress = firebaseCommon.getCurrentProgress(uid, mid)
+
+                    _progress.emit(currentProgress)
+
+                    Log.d("SubMateriVM", "Progress updated: $currentProgress")
+                } catch (e: Exception) {
+                    Log.e("SubMateriViewModel", "Error fetching progress", e)
                 }
             }
         }

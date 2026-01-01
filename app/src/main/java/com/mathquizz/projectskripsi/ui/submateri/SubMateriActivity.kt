@@ -11,7 +11,9 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mathquizz.projectskripsi.MainActivity
@@ -26,6 +28,7 @@ import com.mathquizz.projectskripsi.ui.materi.MateriActivity
 import com.mathquizz.projectskripsi.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SubMateriActivity : AppCompatActivity() {
@@ -44,9 +47,8 @@ class SubMateriActivity : AppCompatActivity() {
 
     private val startModulActivityLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val progressIncrement = result.data?.getIntExtra("progress", 0) ?: 0
-                updateProgress(progressIncrement)
+            if (result.resultCode == RESULT_OK) {
+                viewModel.fetchProgress()
             }
         }
 
@@ -75,6 +77,8 @@ class SubMateriActivity : AppCompatActivity() {
         }
         binding.tvList.text = title
 
+        viewModel.fetchProgress()
+
         setupAdapter(materiId ?: "")
         setupObserver()
 
@@ -97,29 +101,39 @@ class SubMateriActivity : AppCompatActivity() {
     }
 
     private fun setupObserver() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.subMateriList.collectLatest { result ->
-                when (result) {
-                    is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
-                    is Resource.Success -> {
-                        binding.progressBar.visibility = View.GONE
-                        subMateriAdapter.differ.submitList(result.data)
-                        // Trigger update progress awal
-                        updateProgress(viewModel.progress.value)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.subMateriList.collectLatest { result ->
+                    when (result) {
+                        is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
+                        is Resource.Success -> {
+                            binding.progressBar.visibility = View.GONE
+                            subMateriAdapter.differ.submitList(result.data)
+                            // Trigger update progress awal
+                            updateProgress(viewModel.progress.value)
+                        }
+
+                        is Resource.Error -> {
+                            binding.progressBar.visibility = View.GONE
+                            Toast.makeText(
+                                this@SubMateriActivity,
+                                result.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        else -> Unit
                     }
-                    is Resource.Error -> {
-                        binding.progressBar.visibility = View.GONE
-                        Toast.makeText(this@SubMateriActivity, result.message, Toast.LENGTH_SHORT).show()
-                    }
-                    else -> Unit
                 }
             }
         }
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.progress.collectLatest { progress ->
-                updateProgress(progress)
-                showCompletionDialog(progress)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.progress.collectLatest { progress ->
+                    updateProgress(progress)
+                    showCompletionDialog(progress)
+                }
             }
         }
     }
@@ -153,16 +167,18 @@ class SubMateriActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateProgress(increment: Int) {
-        val newProgress = (increment).coerceAtMost(100)
-        binding.scoreProgressIndicator.progress = newProgress
-        binding.scoreProgressText.text = "$newProgress%"
+    private fun updateProgress(totalProgress: Int) {
+        binding.scoreProgressIndicator.progress = totalProgress
+        binding.scoreProgressText.text = "$totalProgress%"
 
         // Update clickability pada adapter yang aktif
         if (::subMateriAdapter.isInitialized) {
-            subMateriAdapter.isProgressSufficient = newProgress >= 50
+            subMateriAdapter.isProgressSufficient = totalProgress >= 50
+
             subMateriAdapter.notifyDataSetChanged()
         }
+
+        showCompletionDialog(totalProgress)
     }
 
 //    private fun submateriSetup() {
