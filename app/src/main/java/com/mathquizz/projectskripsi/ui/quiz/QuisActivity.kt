@@ -18,6 +18,7 @@ import com.mathquizz.projectskripsi.ui.resultquis.ResultQuisActivity
 import com.mathquizz.projectskripsi.util.Resource
 import com.google.android.material.card.MaterialCardView
 import com.google.firebase.auth.FirebaseAuth
+import com.mathquizz.projectskripsi.util.applySystemBarInsets
 import com.mathquizz.projectskripsi.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -48,6 +49,9 @@ class QuisActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setStatusBarColor(this, this, binding.root, window)
+
+        binding.appBarLayout.applySystemBarInsets(applyTop = true)
+        binding.main.applySystemBarInsets(applyBottom = true)
 
         val materiId = intent.getStringExtra("materiId")
         val submateriId = intent.getStringExtra("submateriId")

@@ -21,6 +21,7 @@ import com.mathquizz.projectskripsi.ui.submateri.SubMateriActivity
 import com.mathquizz.projectskripsi.util.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.mathquizz.projectskripsi.ui.materi.MateriActivity
+import com.mathquizz.projectskripsi.util.applySystemBarInsets
 import com.mathquizz.projectskripsi.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -56,6 +57,9 @@ class ModulActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setStatusBarColor(this, this, binding.root, window)
+
+        binding.appBarLayoutModul.applySystemBarInsets(applyTop = true)
+        binding.main.applySystemBarInsets(applyBottom = true)
 
         binding.btnModul.isEnabled = false
         binding.btnModul.alpha = 0.5f

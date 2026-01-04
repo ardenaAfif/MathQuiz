@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import com.mathquizz.projectskripsi.R
 
 fun setStatusBarColor(ctx: Context, activity: AppCompatActivity, rootLayout: View, window: Window) {
@@ -37,4 +38,28 @@ fun setStatusBarColor(ctx: Context, activity: AppCompatActivity, rootLayout: Vie
         window.statusBarColor = ContextCompat.getColor(ctx, R.color.blue_1)
     }
 
+}
+
+fun View.applySystemBarInsets(
+    applyTop: Boolean = false,
+    applyBottom: Boolean = false
+) {
+    val originalPaddingTop = this.paddingTop
+    val originalPaddingBottom = this.paddingBottom
+    val originalPaddingLeft = this.paddingLeft
+    val originalPaddingRight = this.paddingRight
+
+    // 2. Pasang Listener
+    ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
+        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+        view.updatePadding(
+            top = if (applyTop) originalPaddingTop + insets.top else originalPaddingTop,
+            bottom = if (applyBottom) originalPaddingBottom + insets.bottom else originalPaddingBottom,
+            left = originalPaddingLeft,
+            right = originalPaddingRight
+        )
+
+        windowInsets
+    }
 }

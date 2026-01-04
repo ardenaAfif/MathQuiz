@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.mathquizz.projectskripsi.databinding.ActivityResultQuisBinding
 import com.mathquizz.projectskripsi.ui.submateri.SubMateriActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.mathquizz.projectskripsi.util.applySystemBarInsets
 import com.mathquizz.projectskripsi.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest

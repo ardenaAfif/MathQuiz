@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.mathquizz.projectskripsi.dialog.showDialogComplete
 import com.mathquizz.projectskripsi.dialog.showLastDialog
 import com.mathquizz.projectskripsi.ui.materi.MateriActivity
+import com.mathquizz.projectskripsi.util.applySystemBarInsets
 import com.mathquizz.projectskripsi.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -62,6 +63,9 @@ class SubMateriActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setStatusBarColor(this, this, binding.root, window)
+
+        binding.appBarLayout.applySystemBarInsets(applyTop = true)
+        binding.main.applySystemBarInsets(applyBottom = true)
 
         val materiId = intent.getStringExtra("materiId")
         val title = intent.getStringExtra("title")

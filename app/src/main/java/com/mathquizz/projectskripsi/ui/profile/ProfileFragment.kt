@@ -23,6 +23,7 @@ import com.mathquizz.projectskripsi.ui.about.AboutActivity
 import com.mathquizz.projectskripsi.ui.about.AboutUsageActivity
 import com.mathquizz.projectskripsi.ui.about.DevelopActivity
 import com.mathquizz.projectskripsi.util.Resource
+import com.mathquizz.projectskripsi.util.applySystemBarInsets
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -36,7 +37,7 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
 
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
@@ -49,6 +50,9 @@ class ProfileFragment : Fragment() {
         arguments?.let {
             materiId = it.getString("materiId")
         }
+
+        binding.appBarLayout.applySystemBarInsets(applyTop = true)
+        binding.main.applySystemBarInsets(applyBottom = true)
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.user.collect { resource ->

@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.mathquizz.projectskripsi.R
 import com.mathquizz.projectskripsi.databinding.ActivityDevelopBinding
+import com.mathquizz.projectskripsi.util.applySystemBarInsets
 import com.mathquizz.projectskripsi.util.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,6 +24,12 @@ class DevelopActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setStatusBarColor(this, this, binding.root, window)
+
+        binding.appBarLayoutAboutUser.applySystemBarInsets(applyTop = true)
+        binding.main.applySystemBarInsets(applyBottom = true)
+
+        // set toolbar padding top
+
 
     }
 }
