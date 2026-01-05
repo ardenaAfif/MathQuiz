@@ -17,7 +17,7 @@ class HomeMateriAdapter (
     )
 
     private val listData = listOf(
-        HomeMateriModel("Materi Parsial", R.drawable.img_3d_3, "materi"),
+        HomeMateriModel("Materi Turunan", R.drawable.img_3d_3, "materi"),
         HomeMateriModel("Materi Integral", R.drawable.img_shofar_3d1, "materiintegral")
     )
 

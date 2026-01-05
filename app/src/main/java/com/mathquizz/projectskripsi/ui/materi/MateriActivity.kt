@@ -47,7 +47,7 @@ class MateriActivity : AppCompatActivity() {
 
         currentCollectionName = collectionName
 
-        binding.tvTitle.text = if(collectionName == "materiintegral") "Materi Integral" else "Materi Parsial"
+        binding.tvTitle.text = if(collectionName == "materiintegral") "Materi Integral" else "Materi Turunan"
 
         setupRvMateri()
         observeMateri()
